@@ -16,4 +16,4 @@ num2 = pedir_numero("Ingresá el segundo número: ")
 # Calculamos la resta
 resultado = restar(num1, num2)
 
-print("El resultado de la resta es:", resultado)
+print("El resultado de la resta es: ", resultado)
