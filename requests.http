@@ -1,0 +1,195 @@
+### Archivo de pruebas para REST Client
+### Sistema de Gestión de Biblioteca - Fase 1: Libros
+
+### 1. Endpoint raíz - Verificar que la API esté funcionando
+GET http://localhost:8000/
+
+###
+
+### 2. Listar todos los libros (vacío al inicio)
+GET http://localhost:8000/libros
+
+###
+
+### 3. Crear un nuevo libro
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "El Principito",
+    "autor": "Antoine de Saint-Exupéry",
+    "isbn": "9788478884957",
+    "categoria": "Literatura Infantil",
+    "estado": "disponible"
+}
+
+###
+
+### 4. Crear otro libro
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "Cien años de soledad",
+    "autor": "Gabriel García Márquez",
+    "isbn": "9788420471839",
+    "categoria": "Literatura",
+    "estado": "disponible"
+}
+
+###
+
+### 5. Crear un libro de programación
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "Clean Code",
+    "autor": "Robert C. Martin",
+    "isbn": "9780132350884",
+    "categoria": "Programación",
+    "estado": "disponible"
+}
+
+###
+
+### 6. Intentar crear un libro con ISBN duplicado (debe fallar)
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "Otro libro",
+    "autor": "Otro autor",
+    "isbn": "9788478884957",
+    "categoria": "Otra categoría",
+    "estado": "disponible"
+}
+
+###
+
+### 7. Listar todos los libros (ahora con datos)
+GET http://localhost:8000/libros
+
+###
+
+### 8. Listar con paginación
+GET http://localhost:8000/libros?skip=0&limit=2
+
+###
+
+### 9. Obtener un libro específico por ID
+GET http://localhost:8000/libros/1
+
+###
+
+### 10. Intentar obtener un libro que no existe
+GET http://localhost:8000/libros/999
+
+###
+
+### 11. Actualizar un libro existente
+PUT http://localhost:8000/libros/1
+Content-Type: application/json
+
+{
+    "estado": "prestado"
+}
+
+###
+
+### 12. Actualizar múltiples campos de un libro
+PUT http://localhost:8000/libros/2
+Content-Type: application/json
+
+{
+    "titulo": "Cien años de soledad - Edición Especial",
+    "estado": "disponible"
+}
+
+###
+
+### 13. Buscar libros por título
+GET http://localhost:8000/libros/buscar?titulo=principito
+
+###
+
+### 14. Buscar libros por autor
+GET http://localhost:8000/libros/buscar?autor=garcía
+
+###
+
+### 15. Filtrar libros por categoría
+GET http://localhost:8000/libros/buscar?categoria=Literatura
+
+###
+
+### 16. Filtrar libros por estado
+GET http://localhost:8000/libros/buscar?estado=disponible
+
+###
+
+### 17. Búsqueda combinada
+GET http://localhost:8000/libros/buscar?categoria=Literatura&estado=disponible
+
+###
+
+### 18. Buscar con ordenamiento descendente
+GET http://localhost:8000/libros/buscar?ordenar_por=titulo&orden=desc
+
+###
+
+### 19. Buscar con paginación
+GET http://localhost:8000/libros/buscar?skip=0&limit=1
+
+###
+
+### 20. Obtener estadísticas de la biblioteca
+GET http://localhost:8000/estadisticas
+
+###
+
+### 21. Eliminar un libro
+DELETE http://localhost:8000/libros/3
+
+###
+
+### 22. Intentar eliminar un libro que no existe
+DELETE http://localhost:8000/libros/999
+
+###
+
+### 23. Verificar que el libro fue eliminado
+GET http://localhost:8000/libros/3
+
+###
+
+### 24. Listar libros después de eliminar
+GET http://localhost:8000/libros
+
+###
+
+### 25. Crear un libro con datos mínimos
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "Libro de Prueba",
+    "autor": "Autor de Prueba",
+    "isbn": "1234567890123",
+    "categoria": "Prueba"
+}
+
+###
+
+### 26. Intentar crear un libro con datos inválidos (debe fallar)
+POST http://localhost:8000/libros
+Content-Type: application/json
+
+{
+    "titulo": "",
+    "autor": "Autor",
+    "isbn": "123",
+    "categoria": "Categoría"
+}
+
+###
