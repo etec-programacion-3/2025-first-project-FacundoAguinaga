@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Biblioteca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-white rounded shadow p-4 mb-4">
+                    <h1 class="mb-4 text-center text-primary">
+                        <i class="fas fa-book"></i> Sistema de Gestión de Biblioteca
+                    </h1>
+                    
+                    <!-- Estadísticas -->
+                    <div class="row mb-4" id="estadisticas">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-books fa-2x mb-2"></i>
+                                    <h4 id="total-libros">0</h4>
+                                    <small>Total Libros</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                    <h4 id="libros-disponibles">0</h4>
+                                    <small>Disponibles</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-hand-holding fa-2x mb-2"></i>
+                                    <h4 id="libros-prestados">0</h4>
+                                    <small>Prestados</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-tags fa-2x mb-2"></i>
+                                    <h4 id="total-categorias">0</h4>
+                                    <small>Categorías</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para crear/actualizar libro -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-plus-circle"></i> 
+                                <span id="form-title">Agregar Nuevo Libro</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-libro">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="titulo" class="form-label">Título *</label>
+                                        <input type="text" id="titulo" class="form-control" placeholder="Título del libro" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="autor" class="form-label">Autor *</label>
+                                        <input type="text" id="autor" class="form-control" placeholder="Autor del libro" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="isbn" class="form-label">ISBN *</label>
+                                        <input type="text" id="isbn" class="form-control" placeholder="ISBN (10-13 dígitos)" required minlength="10" maxlength="13">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="categoria" class="form-label">Categoría *</label>
+                                        <input type="text" id="categoria" class="form-control" placeholder="Categoría del libro" required list="categorias-list">
+                                        <datalist id="categorias-list"></datalist>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="estado" class="form-label">Estado</label>
+                                        <select id="estado" class="form-select">
+                                            <option value="disponible">Disponible</option>
+                                            <option value="prestado">Prestado</option>
+                                            <option value="mantenimiento">En Mantenimiento</option>
+                                            <option value="perdido">Perdido</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary me-2">
+                                            <i class="fas fa-save"></i> <span id="btn-text">Agregar Libro</span>
+                                        </button>
+                                        <button type="button" id="btn-cancelar" class="btn btn-secondary d-none">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Búsqueda y filtros -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-search"></i> Búsqueda y Filtros
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <input type="text" id="buscar-titulo" class="form-control" placeholder="Buscar por título">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" id="buscar-autor" class="form-control" placeholder="Buscar por autor">
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="filtro-categoria" class="form-select">
+                                        <option value="">Todas las categorías</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="filtro-estado" class="form-select">
+                                        <option value="">Todos los estados</option>
+                                        <option value="disponible">Disponible</option>
+                                        <option value="prestado">Prestado</option>
+                                        <option value="mantenimiento">En Mantenimiento</option>
+                                        <option value="perdido">Perdido</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="btn-buscar" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-search"></i> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de libros -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list"></i> Lista de Libros
+                            </h5>
+                            <button id="btn-limpiar-filtros" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-refresh"></i> Limpiar filtros
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover" id="tabla-libros">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Título</th>
+                                            <th>Autor</th>
+                                            <th>ISBN</th>
+                                            <th>Categoría</th>
+                                            <th>Estado</th>
+                                            <th>Fecha Creación</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Paginación -->
+                            <nav aria-label="Paginación de libros">
+                                <ul class="pagination justify-content-center" id="paginacion">
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div id="mensaje-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    </div>
+
+    <script>
+    // Configuración de la API
+    const baseUrl = 'http://127.0.0.1:8000';
+    const tabla = document.querySelector('#tabla-libros tbody');
+    const form = document.getElementById('form-libro');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const mensajeContainer = document.getElementById('mensaje-container');
+    
+    // Campos del formulario
+    const inputTitulo = document.getElementById('titulo');
+    const inputAutor = document.getElementById('autor');
+    const inputIsbn = document.getElementById('isbn');
+    const inputCategoria = document.getElementById('categoria');
+    const inputEstado = document.getElementById('estado');
+    
+    // Elementos de búsqueda
+    const buscarTitulo = document.getElementById('buscar-titulo');
+    const buscarAutor = document.getElementById('buscar-autor');
+    const filtroCategoria = document.getElementById('filtro-categoria');
+    const filtroEstado = document.getElementById('filtro-estado');
+    const btnBuscar = document.getElementById('btn-buscar');
+    const btnLimpiarFiltros = document.getElementById('btn-limpiar-filtros');
+    
+    let editId = null;
+    let currentPage = 0;
+    const itemsPerPage = 10;
+
+    // Mostrar mensaje de éxito o error
+    function mostrarMensaje(texto, tipo = 'success') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${tipo} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${texto}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        mensajeContainer.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+
+    // Formatear fecha
+    function formatearFecha(fechaStr) {
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString('es-ES') + ' ' + fecha.toLocaleTimeString('es-ES', {hour: '2-digit', minute: '2-digit'});
+    }
+
+    // Obtener badge del estado
+    function getBadgeEstado(estado) {
+        const badges = {
+            'disponible': 'bg-success',
+            'prestado': 'bg-warning',
+            'mantenimiento': 'bg-info',
+            'perdido': 'bg-danger'
+        };
+        return `<span class="badge ${badges[estado] || 'bg-secondary'}">${estado}</span>`;
+    }
+
+    // Cargar estadísticas
+    async function cargarEstadisticas() {
+        try {
+            const res = await fetch(`${baseUrl}/estadisticas`);
+            const stats = await res.json();
+            
+            document.getElementById('total-libros').textContent = stats.total_libros;
+            document.getElementById('libros-disponibles').textContent = stats.libros_disponibles;
+            document.getElementById('libros-prestados').textContent = stats.libros_prestados;
+            document.getElementById('total-categorias').textContent = Object.keys(stats.libros_por_categoria).length;
+            
+            // Actualizar lista de categorías
+            actualizarListaCategorias(stats.libros_por_categoria);
+        } catch (err) {
+            console.error('Error al cargar estadísticas:', err);
+        }
+    }
+
+    // Actualizar lista de categorías en selects y datalist
+    function actualizarListaCategorias(categoriasObj) {
+        const categorias = Object.keys(categoriasObj);
+        
+        // Actualizar datalist del formulario
+        const datalist = document.getElementById('categorias-list');
+        datalist.innerHTML = '';
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            datalist.appendChild(option);
+        });
+        
+        // Actualizar select de filtros
+        const valorActual = filtroCategoria.value;
+        filtroCategoria.innerHTML = '<option value="">Todas las categorías</option>';
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            filtroCategoria.appendChild(option);
+        });
+        filtroCategoria.value = valorActual;
+    }
+
+    // Obtener libros (con o sin filtros)
+    async function cargarLibros(usarFiltros = false) {
+        tabla.innerHTML = '<tr><td colspan="8" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>';
+        
+        try {
+            let url = `${baseUrl}/libros`;
+            const params = new URLSearchParams();
+            
+            params.append('skip', currentPage * itemsPerPage);
+            params.append('limit', itemsPerPage);
+            
+            if (usarFiltros) {
+                url = `${baseUrl}/libros/buscar`;
+                
+                if (buscarTitulo.value.trim()) params.append('titulo', buscarTitulo.value.trim());
+                if (buscarAutor.value.trim()) params.append('autor', buscarAutor.value.trim());
+                if (filtroCategoria.value) params.append('categoria', filtroCategoria.value);
+                if (filtroEstado.value) params.append('estado', filtroEstado.value);
+            }
+            
+            const res = await fetch(`${url}?${params}`);
+            const libros = await res.json();
+            
+            mostrarLibros(libros);
+            
+        } catch (err) {
+            tabla.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error al cargar libros</td></tr>';
+            mostrarMensaje('Error al cargar libros', 'danger');
+        }
+    }
+
+    // Mostrar libros en la tabla
+    function mostrarLibros(libros) {
+        if (libros.length === 0) {
+            tabla.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No se encontraron libros</td></tr>';
+            return;
+        }
+        
+        tabla.innerHTML = '';
+        libros.forEach(libro => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${libro.id}</td>
+                <td class="fw-bold">${libro.titulo}</td>
+                <td>${libro.autor}</td>
+                <td><code>${libro.isbn}</code></td>
+                <td><span class="badge bg-light text-dark">${libro.categoria}</span></td>
+                <td>${getBadgeEstado(libro.estado)}</td>
+                <td><small>${formatearFecha(libro.fecha_creacion)}</small></td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="editarLibro(${libro.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="eliminarLibro(${libro.id})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tabla.appendChild(tr);
+        });
+    }
+
+    // Crear o actualizar libro
+    form.onsubmit = async function(e) {
+        e.preventDefault();
+        
+        const libro = {
+            titulo: inputTitulo.value.trim(),
+            autor: inputAutor.value.trim(),
+            isbn: inputIsbn.value.trim(),
+            categoria: inputCategoria.value.trim(),
+            estado: inputEstado.value
+        };
+        
+        try {
+            let res;
+            if (editId) {
+                // Actualizar
+                res = await fetch(`${baseUrl}/libros/${editId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(libro)
+                });
+                mostrarMensaje('Libro actualizado exitosamente', 'success');
+            } else {
+                // Crear
+                res = await fetch(`${baseUrl}/libros`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(libro)
+                });
+                mostrarMensaje('Libro agregado exitosamente', 'success');
+            }
+            
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.detail || 'Error en la petición');
+            }
+            
+            form.reset();
+            cancelarEdicion();
+            cargarLibros();
+            cargarEstadisticas();
+            
+        } catch (err) {
+            mostrarMensaje(err.message, 'danger');
+        }
+    };
+
+    // Editar libro
+    window.editarLibro = async function(id) {
+        try {
+            const res = await fetch(`${baseUrl}/libros/${id}`);
+            const libro = await res.json();
+            
+            editId = id;
+            inputTitulo.value = libro.titulo;
+            inputAutor.value = libro.autor;
+            inputIsbn.value = libro.isbn;
+            inputCategoria.value = libro.categoria;
+            inputEstado.value = libro.estado;
+            
+            document.getElementById('form-title').textContent = 'Editar Libro';
+            document.getElementById('btn-text').textContent = 'Actualizar Libro';
+            btnCancelar.classList.remove('d-none');
+            
+            // Scroll al formulario
+            form.scrollIntoView({ behavior: 'smooth' });
+            
+        } catch (err) {
+            mostrarMensaje('Error al cargar datos del libro', 'danger');
+        }
+    };
+
+    // Cancelar edición
+    function cancelarEdicion() {
+        editId = null;
+        document.getElementById('form-title').textContent = 'Agregar Nuevo Libro';
+        document.getElementById('btn-text').textContent = 'Agregar Libro';
+        btnCancelar.classList.add('d-none');
+    }
+
+    btnCancelar.onclick = cancelarEdicion;
+
+    // Eliminar libro
+    window.eliminarLibro = async function(id) {
+        if (!confirm('¿Estás seguro de que deseas eliminar este libro? Esta acción no se puede deshacer.')) return;
+        
+        try {
+            const res = await fetch(`${baseUrl}/libros/${id}`, { method: 'DELETE' });
+            
+            if (!res.ok) {
+                const error = await res.json();
+                throw new Error(error.detail || 'Error al eliminar');
+            }
+            
+            mostrarMensaje('Libro eliminado exitosamente', 'success');
+            cargarLibros();
+            cargarEstadisticas();
+            
+        } catch (err) {
+            mostrarMensaje(err.message, 'danger');
+        }
+    };
+
+    // Búsqueda
+    btnBuscar.onclick = function() {
+        currentPage = 0;
+        cargarLibros(true);
+    };
+
+    // Limpiar filtros
+    btnLimpiarFiltros.onclick = function() {
+        buscarTitulo.value = '';
+        buscarAutor.value = '';
+        filtroCategoria.value = '';
+        filtroEstado.value = '';
+        currentPage = 0;
+        cargarLibros(false);
+    };
+
+    // Búsqueda en tiempo real (con debounce)
+    let searchTimeout;
+    [buscarTitulo, buscarAutor].forEach(input => {
+        input.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 0;
+                cargarLibros(true);
+            }, 500);
+        });
+    });
+
+    // Filtros en tiempo real
+    [filtroCategoria, filtroEstado].forEach(select => {
+        select.addEventListener('change', function() {
+            currentPage = 0;
+            cargarLibros(true);
+        });
+    });
+
+    // Inicializar aplicación
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarLibros();
+        cargarEstadisticas();
+    });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

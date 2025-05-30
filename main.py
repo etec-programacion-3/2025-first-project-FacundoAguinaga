@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware  # 👈 Importar CORS
 from tortoise.contrib.fastapi import register_tortoise
 from tortoise.models import Model
 from tortoise import fields
@@ -11,6 +12,15 @@ app = FastAPI(
     title="Sistema de Gestión de Biblioteca",
     description="API REST para gestionar libros de una biblioteca escolar",
     version="1.0.0"
+)
+
+# 👈 CONFIGURAR CORS - ¡ESTO ES LO QUE NECESITAS!
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # En producción deberías especificar los dominios exactos
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, PUT, DELETE, OPTIONS)
+    allow_headers=["*"],  # Permite todos los headers
 )
 
 # Modelo de base de datos con Tortoise ORM
